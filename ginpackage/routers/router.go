@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"GoGin/ginpackage/middleware/jwt"
 	"GoGin/ginpackage/pkg/setting"
 	"GoGin/ginpackage/routers/api"
 	"GoGin/ginpackage/routers/api/v1"
@@ -14,7 +15,9 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Recovery())
 	gin.SetMode(setting.RunMode)
 	r.GET("/auth", api.GetAuth)
+
 	apiv1 := r.Group("/api/v1")
+	apiv1.Use(jwt.JWT())
 	{
 		// 获取标签列表
 		apiv1.GET("/tags", v1.GetTags)
@@ -25,7 +28,7 @@ func InitRouter() *gin.Engine {
 		// 删除指定标签
 		apiv1.DELETE("/tags/:id", v1.DeleteTag)
 		// 获取文章列表
-		apiv1.GET("/articles", v1.GetArticle)
+		apiv1.GET("/articles", v1.GetSomeArticles)
 		// 获取指定的文章
 		apiv1.GET("/articles/:id", v1.GetArticle)
 		// 新建文章
