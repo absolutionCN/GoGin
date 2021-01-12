@@ -2,6 +2,7 @@ package v1
 
 import (
 	"GoGin/ginpackage/models"
+	"GoGin/ginpackage/pkg/logging"
 	"GoGin/ginpackage/pkg/setting"
 	"GoGin/ginpackage/pkg/setting/e"
 	"GoGin/ginpackage/pkg/util"
@@ -58,6 +59,7 @@ func AddTags(c *gin.Context) {
 			models.AddTag(name, state, createdBy)
 		} else {
 			code = e.ERROR_EXIST_TAG
+			logging.Error(code)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -101,6 +103,7 @@ func EditTag(c *gin.Context) {
 			models.EditTag(id, data)
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE
+			logging.Error(code)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -124,6 +127,7 @@ func DeleteTag(c *gin.Context) {
 			models.DeleteTag(id)
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
+			logging.Error(code)
 		}
 	}
 
