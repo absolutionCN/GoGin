@@ -57,9 +57,10 @@ func AddTags(c *gin.Context) {
 		if !models.ExistTagByName(name) {
 			code = e.SUCCESS
 			models.AddTag(name, state, createdBy)
+			logging.Info("新增tag成功")
 		} else {
 			code = e.ERROR_EXIST_TAG
-			logging.Error(code)
+			logging.Error("tag已存在：", code)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -101,9 +102,10 @@ func EditTag(c *gin.Context) {
 			}
 
 			models.EditTag(id, data)
+			logging.Info("修改后的标签数据为：", data)
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE
-			logging.Error(code)
+			logging.Error("文章不存在：", code)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -125,9 +127,10 @@ func DeleteTag(c *gin.Context) {
 		code = e.SUCCESS
 		if models.ExistTagByID(id) {
 			models.DeleteTag(id)
+			logging.Info("删除文章标签成功, 标签id:", id)
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
-			logging.Error(code)
+			logging.Error("tag不存在：", code)
 		}
 	}
 

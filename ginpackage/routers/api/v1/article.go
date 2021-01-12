@@ -28,6 +28,7 @@ func GetArticle(c *gin.Context) {
 			code = e.SUCCESS
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE
+			logging.Error("文章不存在：", code)
 		}
 	} else {
 		for _, err := range valid.Errors {
@@ -69,9 +70,10 @@ func GetSomeArticles(c *gin.Context) {
 
 		data["lists"] = models.GetArticles(util.GetPage(c), setting.PageSize, maps)
 		data["total"] = models.GetArticleTotal(maps)
+		logging.Info("获取文章成功:", code)
 	} else {
 		for _, err := range valid.Errors {
-			logging.Info(err.Key, err.Message)
+			logging.Error(err.Key, err.Message)
 		}
 	}
 
@@ -112,8 +114,10 @@ func AddArticles(c *gin.Context) {
 
 			models.AddArticle(data)
 			code = e.SUCCESS
+			logging.Info("新增文章成功:", code)
 		} else {
 			code = e.ERROR_NOT_EXIST_TAG
+			logging.Error("新增文章标签不存在:", code)
 		}
 	} else {
 		for _, err := range valid.Errors {
@@ -173,11 +177,14 @@ func EditArticles(c *gin.Context) {
 
 				models.EditArticle(id, data)
 				code = e.SUCCESS
+				logging.Info("修改文章成功:", code)
 			} else {
 				code = e.ERROR_NOT_EXIST_TAG
+				logging.Error("修改文章TAG不存在：", code)
 			}
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE
+			logging.Error("修改文章，文章不存在：", code)
 		}
 	} else {
 		for _, err := range valid.Errors {
@@ -203,8 +210,10 @@ func DeleteArticles(c *gin.Context) {
 		if models.ExistArticleByID(id) {
 			models.DeleteArticle(id)
 			code = e.SUCCESS
+			logging.Info("删除文章成功:", code)
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE
+			logging.Info("删除文章。文章不存在:", code)
 		}
 	} else {
 		for _, err := range valid.Errors {

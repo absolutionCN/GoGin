@@ -32,13 +32,16 @@ func GetAuth(c *gin.Context) {
 			token, err := util.GenerateToken(username, password)
 			if err != nil {
 				code = e.ERROR_AUTH_TOKEN
+				logging.Error("getAuth校验token不通过:", code)
 			} else {
 				data["token"] = token
 
 				code = e.SUCCESS
+				logging.Info("getAuth调用成功:", code)
 			}
 		} else {
 			code = e.ERROR_AUTH
+			logging.Info("用户权限错误：", code)
 		}
 
 	} else {
