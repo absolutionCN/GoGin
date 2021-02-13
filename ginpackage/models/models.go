@@ -4,6 +4,7 @@ import (
 	"GoGin/ginpackage/pkg/setting"
 	"fmt"
 	"log"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -45,8 +46,36 @@ func init() {
 	db.SingularTable(true)
 	db.DB().SetMaxIdleConns(10)
 	db.DB().SetMaxOpenConns(100)
+	db.Callback().Create().Replace("gorm:update_time_stamp", updateTimeStampForCreateCallBack)
+	db.Callback().Update().Replace("gorm:update_time_stamp", updateTimeStampForUpdateCallback)
+
 }
 
 func CloseDB() {
 	defer db.Close()
+}
+
+// updateTimeStampForCreateCallback will set `CreatedOn`, `ModifiedOn` when creating
+func updateTimeStampForCreateCallBack(scope *gorm.Scope) {
+	if !scope.HasError() {
+		nowTime := time.Now().Unix()
+		if createTimeField, ok := scope.FieldByName("CreatedOn"); ok {
+			if createTimeField.IsBlank {
+				createTimeField.Set(nowTime)
+			}
+		}
+
+		if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
+			if modifyTimeField.IsBlank {
+				modifyTimeField.Set(nowTime)
+			}
+		}
+	}
+}
+
+// updateTimeStampForUpdateCallback will set `ModifyTime` when updating
+func updateTimeStampForUpdateCallback(scope *gorm.Scope) {
+	if _, ok := scope.Get("gorm:update_colunm"); !ok {
+		scope.SetColumn("ModifiedOn", time.Now().Unix())
+	}
 }

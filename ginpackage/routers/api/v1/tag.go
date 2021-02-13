@@ -46,6 +46,12 @@ func GetTags(c *gin.Context) {
 	})
 }
 
+type AddTagsForm struct {
+	Name      string `gorm:"column:name" json:"name" valid:"Required"`
+	CreatedBy string `gorm:"column:created_by" json:"created_by" valid:"Required"`
+	State     int    `gorm:"column:state" json:"state"`
+}
+
 // @Summary 新增文章标签
 // @Produce  json
 // @Param name body string true "Name"
@@ -54,22 +60,23 @@ func GetTags(c *gin.Context) {
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/v1/tags [post]
 func AddTags(c *gin.Context) {
-	name := c.Query("name")
-	state := com.StrTo(c.DefaultQuery("state", "0")).MustInt()
-	createdBy := c.Query("created_by")
-
+	var addTagsForm AddTagsForm
+	err := c.BindJSON(&addTagsForm)
+	if err != nil {
+		logging.Error("AddTags获取参数失败：", err)
+	}
 	valid := validation.Validation{}
-	valid.Required(name, "name").Message("名称不能为空")
-	valid.MaxSize(name, 100, "name").Message("名称最长为100字符")
-	valid.Required(createdBy, "created_by").Message("创建人不能为空")
-	valid.MaxSize(createdBy, 100, "created_by").Message("创建人最长为100字符")
-	valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
+	valid.Required(addTagsForm.Name, "name").Message("名称不能为空")
+	valid.MaxSize(addTagsForm.Name, 100, "name").Message("名称最长为100字符")
+	valid.Required(addTagsForm.CreatedBy, "created_by").Message("创建人不能为空")
+	valid.MaxSize(addTagsForm.CreatedBy, 100, "created_by").Message("创建人最长为100字符")
+	valid.Range(addTagsForm.State, 0, 1, "state").Message("状态只允许0或1")
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
-		if !models.ExistTagByName(name) {
+		if !models.ExistTagByName(addTagsForm.Name) {
 			code = e.SUCCESS
-			models.AddTag(name, state, createdBy)
+			models.AddTag(addTagsForm.Name, addTagsForm.State, addTagsForm.CreatedBy)
 			logging.Info("新增tag成功")
 		} else {
 			code = e.ERROR_EXIST_TAG
@@ -83,6 +90,12 @@ func AddTags(c *gin.Context) {
 	})
 }
 
+type EditTagForm struct {
+	ID         int    `gorm:"column:id" json:"id" valid:"Required"`
+	Name       string `gorm:"column:name" json:"name" valid:"Required"`
+	ModifiedBy string `gorm:"column:modified_by" json:"modified_by" valid:"Required"`
+}
+
 // @Summary 修改文章标签
 // @Produce  json
 // @Param id path int true "ID"
@@ -93,10 +106,11 @@ func AddTags(c *gin.Context) {
 // @Router /api/v1/tags/{id} [put]
 func EditTag(c *gin.Context) {
 	// 修改文章标签
-	id := com.StrTo(c.Param("id")).MustInt()
-	name := c.Query("name")
-	modifiedBy := c.Query("modified_by")
-
+	var editTagForm EditTagForm
+	err := c.BindJSON(&editTagForm)
+	if err != nil {
+		logging.Error("EditTag接口获取参数失败:", err)
+	}
 	vaild := validation.Validation{}
 
 	var state int = -1
@@ -104,25 +118,25 @@ func EditTag(c *gin.Context) {
 		state = com.StrTo(arg).MustInt()
 		vaild.Range(state, 0, 1, "state").Message("状态只允许0或1")
 	}
-	vaild.Required(id, "id").Message("ID不能为空")
-	vaild.Required(modifiedBy, "modified_by").Message("修改人不能为空")
-	vaild.MaxSize(modifiedBy, 100, "modified_by").Message("修改人最长为100字符")
-	vaild.MaxSize(name, 100, "name").Message("名字最长为100字符")
+	vaild.Required(editTagForm.ID, "id").Message("ID不能为空")
+	vaild.Required(editTagForm.ModifiedBy, "modified_by").Message("修改人不能为空")
+	vaild.MaxSize(editTagForm.ModifiedBy, 100, "modified_by").Message("修改人最长为100字符")
+	vaild.MaxSize(editTagForm.Name, 100, "name").Message("名字最长为100字符")
 
 	code := e.INVALID_PARAMS
 	if !vaild.HasErrors() {
 		code = e.SUCCESS
-		if models.ExistTagByID(id) {
+		if models.ExistTagByID(editTagForm.ID) {
 			data := make(map[string]interface{})
-			data["modified_by"] = modifiedBy
-			if name != "" {
-				data["name"] = name
+			data["modified_by"] = editTagForm.ModifiedBy
+			if editTagForm.Name != "" {
+				data["name"] = editTagForm.Name
 			}
 			if state != -1 {
 				data["state"] = state
 			}
 
-			models.EditTag(id, data)
+			models.EditTag(editTagForm.ID, data)
 			logging.Info("修改后的标签数据为：", data)
 		} else {
 			code = e.ERROR_NOT_EXIST_ARTICLE

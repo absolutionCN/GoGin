@@ -94,6 +94,15 @@ func GetSomeArticles(c *gin.Context) {
 	})
 }
 
+type AddArticlesForm struct {
+	TagId     int    `gorm:"column:tag_id" json:"tag_id" valid:"Required"`
+	Title     string `gorm:"column:title" json:"title" valid:"Required"`
+	Desc      string `gorm:"column:desc" json:"desc" valid:"Required"`
+	Content   string `gorm:"column:content" json:"content" valid:"Required"`
+	CreatedBy string `gorm:"column:created_by" json:"created_by" valid:"Required"`
+	State     int    `gorm:"column:state" json:"state"`
+}
+
 // @Summary 新增文章
 // @Produce  json
 // @Param tag_id body int true "TagID"
@@ -105,31 +114,30 @@ func GetSomeArticles(c *gin.Context) {
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/v1/articles [post]
 func AddArticles(c *gin.Context) {
-	tagId := com.StrTo(c.Query("tag_id")).MustInt()
-	title := c.Query("title")
-	desc := c.Query("desc")
-	content := c.Query("content")
-	createdBy := c.Query("created_by")
-	state := com.StrTo(c.DefaultQuery("state", "0")).MustInt()
+	var addArticlesForm AddArticlesForm
+	err := c.BindJSON(&addArticlesForm)
+	if err != nil {
+		logging.Error("AddArticles接口获取参数失败:", err)
+	}
 
 	valid := validation.Validation{}
-	valid.Min(tagId, 1, "tag_id").Message("标签ID必须大于0")
-	valid.Required(title, "title").Message("标题不能为空")
-	valid.Required(desc, "desc").Message("简述不能为空")
-	valid.Required(content, "content").Message("内容不能为空")
-	valid.Required(createdBy, "created_by").Message("创建人不能为空")
-	valid.Range(state, 0, 1, "state").Message("状态只允许为0或1")
+	valid.Min(addArticlesForm.TagId, 1, "tag_id").Message("标签ID必须大于0")
+	valid.Required(addArticlesForm.Title, "title").Message("标题不能为空")
+	valid.Required(addArticlesForm.Desc, "desc").Message("简述不能为空")
+	valid.Required(addArticlesForm.Content, "content").Message("内容不能为空")
+	valid.Required(addArticlesForm.CreatedBy, "created_by").Message("创建人不能为空")
+	valid.Range(addArticlesForm.State, 0, 1, "state").Message("状态只允许为0或1")
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
-		if models.ExistTagByID(tagId) {
+		if models.ExistTagByID(addArticlesForm.TagId) {
 			data := make(map[string]interface{})
-			data["tag_id"] = tagId
-			data["title"] = title
-			data["desc"] = desc
-			data["content"] = content
-			data["created_by"] = createdBy
-			data["state"] = state
+			data["tag_id"] = addArticlesForm.TagId
+			data["title"] = addArticlesForm.Title
+			data["desc"] = addArticlesForm.Desc
+			data["content"] = addArticlesForm.Content
+			data["created_by"] = addArticlesForm.CreatedBy
+			data["state"] = addArticlesForm.State
 
 			models.AddArticle(data)
 			code = e.SUCCESS
@@ -150,6 +158,16 @@ func AddArticles(c *gin.Context) {
 	})
 }
 
+type EditArticlesForm struct {
+	ID         int    `gorm:"column:id" json:"id" valid:"Required"`
+	TagId      int    `gorm:"column:tag_id" json:"tag_id" valid:"Required"`
+	Title      string `gorm:"column:title" json:"title" valid:"Required"`
+	Desc       string `gorm:"column:desc" json:"desc" valid:"Required"`
+	Content    string `gorm:"column:content" json:"content" valid:"Required"`
+	ModifiedBy string `gorm:"column:modified_by" json:"modified_by" valid:"Required"`
+	State      int    `gorm:"column:state" json:"state"`
+}
+
 // @Summary 修改文章
 // @Produce  json
 // @Param id path int true "ID"
@@ -162,14 +180,12 @@ func AddArticles(c *gin.Context) {
 // @Success 200 {string} json "{"code":200,"data":{},"msg":"ok"}"
 // @Router /api/v1/articles/{id} [put]
 func EditArticles(c *gin.Context) {
+	var editArticlesForm EditArticlesForm
+	err := c.BindJSON(&editArticlesForm)
+	if err != nil {
+		logging.Error("EditArticles接口获取参数失败", err)
+	}
 	valid := validation.Validation{}
-
-	id := com.StrTo(c.Param("id")).MustInt()
-	tagId := com.StrTo(c.Query("tag_id")).MustInt()
-	title := c.Query("title")
-	desc := c.Query("desc")
-	content := c.Query("content")
-	modifiedBy := c.Query("modified_by")
 
 	var state int = -1
 	if arg := c.Query("state"); arg != "" {
@@ -177,34 +193,34 @@ func EditArticles(c *gin.Context) {
 		valid.Range(state, 0, 1, "state").Message("状态只允许0或1")
 	}
 
-	valid.Min(id, 1, "id").Message("ID必须大于0")
-	valid.MaxSize(title, 100, "title").Message("标题最长为100字符")
-	valid.MaxSize(desc, 255, "desc").Message("简述最长为255字符")
-	valid.MaxSize(content, 65535, "content").Message("内容最长为65535字符")
-	valid.Required(modifiedBy, "modified_by").Message("修改人不能为空")
-	valid.MaxSize(modifiedBy, 100, "modified_by").Message("修改人最长为100字符")
+	valid.Min(editArticlesForm.ID, 1, "id").Message("ID必须大于0")
+	valid.MaxSize(editArticlesForm.Title, 100, "title").Message("标题最长为100字符")
+	valid.MaxSize(editArticlesForm.Desc, 255, "desc").Message("简述最长为255字符")
+	valid.MaxSize(editArticlesForm.Content, 65535, "content").Message("内容最长为65535字符")
+	valid.Required(editArticlesForm.ModifiedBy, "modified_by").Message("修改人不能为空")
+	valid.MaxSize(editArticlesForm.ModifiedBy, 100, "modified_by").Message("修改人最长为100字符")
 
 	code := e.INVALID_PARAMS
 	if !valid.HasErrors() {
-		if models.ExistArticleByID(id) {
-			if models.ExistTagByID(tagId) {
+		if models.ExistArticleByID(editArticlesForm.ID) {
+			if models.ExistTagByID(editArticlesForm.TagId) {
 				data := make(map[string]interface{})
-				if tagId > 0 {
-					data["tag_id"] = tagId
+				if editArticlesForm.TagId > 0 {
+					data["tag_id"] = editArticlesForm.TagId
 				}
-				if title != "" {
-					data["title"] = title
+				if editArticlesForm.Title != "" {
+					data["title"] = editArticlesForm.Title
 				}
-				if desc != "" {
-					data["desc"] = desc
+				if editArticlesForm.Desc != "" {
+					data["desc"] = editArticlesForm.Desc
 				}
-				if content != "" {
-					data["content"] = content
+				if editArticlesForm.Content != "" {
+					data["content"] = editArticlesForm.Content
 				}
 
-				data["modified_by"] = modifiedBy
+				data["modified_by"] = editArticlesForm.ModifiedBy
 
-				models.EditArticle(id, data)
+				models.EditArticle(editArticlesForm.ID, data)
 				code = e.SUCCESS
 				logging.Info("修改文章成功:", code)
 			} else {
