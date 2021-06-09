@@ -1,0 +1,203 @@
+info:
+  contact: {}
+paths:
+  /api/v1/owner/totals:
+    get:
+      parameters:
+      - description: prodect
+        in: path
+        name: prodect
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":data,"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取业务线所有人名下接口总数
+  /api/v1/svc/{id}:
+    get:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取服务所有接口
+  /api/v1/token:
+    delete:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 删除token
+    post:
+      parameters:
+      - description: prodect
+        in: body
+        name: prodect
+        required: true
+        schema:
+          type: string
+      - description: servername
+        in: body
+        name: servername
+        required: true
+        schema:
+          type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: sid
+        in: body
+        name: sid
+        required: true
+        schema:
+          type: integer
+      - description: owner
+        in: body
+        name: owner
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 新增token
+    put:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: prodect
+        in: body
+        name: prodect
+        required: true
+        schema:
+          type: string
+      - description: servername
+        in: body
+        name: servername
+        required: true
+        schema:
+          type: string
+      - description: token
+        in: body
+        name: token
+        required: true
+        schema:
+          type: string
+      - description: sid
+        in: body
+        name: sid
+        required: true
+        schema:
+          type: integer
+      - description: coverage
+        in: body
+        name: coverage
+        required: true
+        schema:
+          type: integer
+      - description: owner
+        in: body
+        name: owner
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 修改token
+  /api/v1/token/{id}:
+    get:
+      parameters:
+      - description: ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取单个token
+  /api/v1/tokens:
+    get:
+      parameters:
+      - description: state
+        in: path
+        name: state
+        type: integer
+      - description: pageNum
+        in: path
+        name: pageNum
+        type: integer
+      - description: pageSize
+        in: path
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取token列表
+  /user/login:
+    post:
+      parameters:
+      - description: username
+        in: path
+        name: username
+        required: true
+        type: integer
+      - description: password
+        in: path
+        name: password
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":{"token":"", "name:""},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 登录
+swagger: "2.0"
