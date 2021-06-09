@@ -24,12 +24,12 @@ var doc = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/owner/totals": {
+        "/api/v1/product/member": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
-                "summary": "获取业务线所有人名下接口总数",
+                "summary": "获取业务线人员",
                 "parameters": [
                     {
                         "type": "integer",
@@ -39,6 +39,38 @@ var doc = `{
                         "required": true
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":1000,\"data\":data,\"msg\":\"ok\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/product/owner/total": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取业务线所有人名下接口总数",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":200,\"data\":data,\"msg\":\"ok\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/product/total": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取业务线所有人名下接口总数",
                 "responses": {
                     "200": {
                         "description": "{\"code\":200,\"data\":data,\"msg\":\"ok\"}",
@@ -291,6 +323,22 @@ var doc = `{
                 "responses": {
                     "200": {
                         "description": "{\"code\":200,\"data\":{},\"msg\":\"ok\"}",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/info/get": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "获取用户信息",
+                "responses": {
+                    "200": {
+                        "description": "{\"code\":1000,\"data\":{\"token\":\"\", \"name:\"\"},\"msg\":\"ok\"}",
                         "schema": {
                             "type": "string"
                         }

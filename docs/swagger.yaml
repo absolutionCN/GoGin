@@ -1,7 +1,7 @@
 info:
   contact: {}
 paths:
-  /api/v1/owner/totals:
+  /api/v1/product/member:
     get:
       parameters:
       - description: prodect
@@ -9,6 +9,26 @@ paths:
         name: prodect
         required: true
         type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":1000,"data":data,"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取业务线人员
+  /api/v1/product/owner/total:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":200,"data":data,"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取业务线所有人名下接口总数
+  /api/v1/product/total:
+    get:
       produces:
       - application/json
       responses:
@@ -179,6 +199,16 @@ paths:
           schema:
             type: string
       summary: 获取token列表
+  /user/info/get:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: '{"code":1000,"data":{"token":"", "name:""},"msg":"ok"}'
+          schema:
+            type: string
+      summary: 获取用户信息
   /user/login:
     post:
       parameters:
