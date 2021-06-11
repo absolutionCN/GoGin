@@ -14,6 +14,7 @@ var MsgFlags = map[int]string{
 	ERROR_SYNC_YAPI:                "Yapi同步接口出错",
 	ERROR_SYNC_RUNNING:             "Yapi接口同步中...",
 	ERROR_NOT_EXIST_GROUP:          "业务线不存在",
+	ERROR_EXIST_AUTH:               "用户已存在",
 }
 
 func GetMsg(code int) string {

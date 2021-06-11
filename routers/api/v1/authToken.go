@@ -13,6 +13,35 @@ import (
 type AuthToken struct {
 	Username string `valid:"Required; MaxSize(50)" json:"username"`
 	Password string `valid:"Required; MaxSize(50)" json:"password"`
+	Role     int    `json:"role"`
+}
+
+func CreateUserNumber(c *gin.Context) {
+	var authToken AuthToken
+	err := c.BindJSON(&authToken)
+	if err != nil {
+		logging.Error(err)
+	}
+
+	valid := validation.Validation{}
+	//data := make(map[string]interface{})
+	ok, _ := valid.Valid(&authToken)
+	code := msgCode.INVALID_PARAMS
+	if ok {
+		if !models.ExistAuthByName(authToken.Username) {
+			code = msgCode.ERROR_EXIST_AUTH
+			logging.Warn(authToken.Username, " : 用户名已存在！！！！")
+		} else {
+			code = msgCode.SUCCESS
+			models.CreateUserNumber(authToken.Username, authToken.Password, authToken.Role)
+			logging.Info("创建用户成功，账号："+authToken.Username+"  密码：", authToken.Password)
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  msgCode.GetMsg(code),
+		"data": nil,
+	})
 }
 
 // @Summary 登录
@@ -75,13 +104,13 @@ func GetUserInfo(c *gin.Context) {
 		code = msgCode.ERROR_NOT_EXIST_AUTH
 		logging.Warn("GetUserInfo用户不存在")
 	} else {
-		var roles []string
+		var roles []int
 		auth := models.GetUserInfoByName(claims.Username)
 		data["name"] = auth.Username
 		roles = append(roles, auth.Role)
 		data["roles"] = roles
 		data["token"] = token
-		data["avatar"] = auth.Avatar
+		//data["avatar"] = auth.Avatar
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,

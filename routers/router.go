@@ -21,6 +21,7 @@ func InitRouter() *gin.Engine {
 	r.POST("/user/login", api.GetAuthToken)
 	r.GET("/user/info/get", api.GetUserInfo)
 	r.POST("/user/logout", api.AuthLogOut)
+	r.POST("/user/create", api.CreateUserNumber)
 	apiToken := r.Group("/api/v1")
 	apiToken.Use(jwt.JWT())
 	{

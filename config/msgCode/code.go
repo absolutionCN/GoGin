@@ -14,6 +14,7 @@ const (
 	ERROR_SYNC_YAPI                = 20001
 	ERROR_SYNC_RUNNING             = 20002
 	ERROR_NOT_EXIST_GROUP          = 30001
+	ERROR_EXIST_AUTH               = 30002
 )
 
 const (
