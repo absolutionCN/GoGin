@@ -1,8 +1,8 @@
 package util
 
 import (
-	"GolangApiTest/config"
-	"GolangApiTest/config/logging"
+	"GoGin/config"
+	"GoGin/config/logging"
 	"encoding/json"
 	"errors"
 	"github.com/unknwon/com"
@@ -31,7 +31,7 @@ type ApiContent struct {
 	EditUid   int           `json:"edit_uid"`
 	Status    string        `json:"status"`
 	ApiOpen   bool          `json:"api_opened"`
-	Tag       []interface{} `json:"tag"`
+	Tag       []interface{} `json:"tagModel"`
 	Method    string        `json:"method"`
 	Title     string        `json:"title"`
 	Path      string        `json:"path"`

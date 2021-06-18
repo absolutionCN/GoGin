@@ -1,7 +1,7 @@
 package models
 
 import (
-	"GolangApiTest/config/logging"
+	"GoGin/config/logging"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"sort"

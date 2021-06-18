@@ -1,7 +1,7 @@
 package models
 
 import (
-	"GolangApiTest/config"
+	"GoGin/config"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -10,7 +10,9 @@ import (
 var db *gorm.DB
 
 type Model struct {
-	ID int `gorm:"primary_key" json:"id"`
+	ID         int `gorm:"primary_key" json:"id"`
+	CreatedOn  int `gorm:"created_on" json:"created_on"`
+	ModifiedOn int `gorm:"modified_on" json:"modified_on"`
 }
 
 func init() {

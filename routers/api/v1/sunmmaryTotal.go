@@ -1,9 +1,9 @@
 package api
 
 import (
-	"GolangApiTest/config/logging"
-	"GolangApiTest/config/msgCode"
-	"GolangApiTest/models"
+	"GoGin/config/logging"
+	"GoGin/config/msgCode"
+	"GoGin/models"
 	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
 	"net/http"

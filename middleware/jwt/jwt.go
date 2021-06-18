@@ -1,9 +1,9 @@
 package jwt
 
 import (
-	"GolangApiTest/config/logging"
-	"GolangApiTest/config/msgCode"
-	"GolangApiTest/config/util"
+	"GoGin/config/logging"
+	"GoGin/config/msgCode"
+	"GoGin/config/util"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"

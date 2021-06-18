@@ -1,10 +1,11 @@
 package routers
 
 import (
-	"GolangApiTest/config"
-	_ "GolangApiTest/docs"
-	"GolangApiTest/middleware/jwt"
-	"GolangApiTest/routers/api/v1"
+	"GoGin/config"
+	_ "GoGin/docs"
+	"GoGin/middleware/jwt"
+	"GoGin/routers/api/tagModel"
+	"GoGin/routers/api/v1"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -34,6 +35,18 @@ func InitRouter() *gin.Engine {
 		apiToken.GET("/product/owner/total", api.GetMemberApiTotal)
 		apiToken.GET("/product/total", api.GetProductApiTotal)
 		apiToken.GET("/product/member", api.GetProjectMember)
+	}
+
+	tagRoute := r.Group("/api/tagModel")
+	{
+		//获取多个标签
+		tagRoute.GET("/tags", tagModel.GetTags)
+		//新增文章标签
+		tagRoute.POST("/addTag", tagModel.AddTag)
+		//修改文章标签
+		tagRoute.PUT("/editTag/:id", tagModel.EditTag)
+		//删除文章标签
+		tagRoute.DELETE("/deleteTag/:id", tagModel.DeleteTag)
 	}
 	return r
 }

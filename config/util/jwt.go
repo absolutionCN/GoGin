@@ -1,7 +1,7 @@
 package util
 
 import (
-	"GolangApiTest/config"
+	"GoGin/config"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"time"

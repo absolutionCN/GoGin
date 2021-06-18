@@ -1,9 +1,9 @@
 package models
 
 import (
-	"GolangApiTest/config/logging"
-	"GolangApiTest/config/msgCode"
-	"GolangApiTest/config/util"
+	"GoGin/config/logging"
+	"GoGin/config/msgCode"
+	"GoGin/config/util"
 	"github.com/jinzhu/gorm"
 	"sync"
 )

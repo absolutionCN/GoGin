@@ -1,8 +1,8 @@
 package main
 
 import (
-	"GolangApiTest/config"
-	"GolangApiTest/routers"
+	"GoGin/config"
+	"GoGin/routers"
 	"fmt"
 	"net/http"
 )
