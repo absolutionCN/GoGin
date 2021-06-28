@@ -16,6 +16,7 @@ const (
 	ERROR_NOT_EXIST_GROUP          = 30001
 	ERROR_EXIST_AUTH               = 30002
 	ERROR_EXIST_TAG                = 30003
+	ERROR_NOT_EXIST_TAG            = 30004
 )
 
 const (

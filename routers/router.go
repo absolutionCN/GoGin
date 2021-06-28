@@ -44,9 +44,9 @@ func InitRouter() *gin.Engine {
 		//新增文章标签
 		tagRoute.POST("/addTag", tagModel.AddTag)
 		//修改文章标签
-		tagRoute.PUT("/editTag/:id", tagModel.EditTag)
+		tagRoute.PUT("/editTag", tagModel.EditTag)
 		//删除文章标签
-		tagRoute.DELETE("/deleteTag/:id", tagModel.DeleteTag)
+		tagRoute.DELETE("/deleteTag", tagModel.DeleteTag)
 	}
 	return r
 }

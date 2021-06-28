@@ -75,12 +75,11 @@ func AddTag(c *gin.Context) {
 		logging.Error(err)
 	}
 	valid := validation.Validation{}
-	valid.Required(&addTagForm.Name, "name").Message("标签名称不能为空")
-	valid.MaxSize(&addTagForm.Name, 100, "name").Message("标签名称最长为100个字符")
-	valid.Required(&addTagForm.State, "state").Message("标签状态不能为空")
-	valid.MaxSize(&addTagForm.State, 3, "state").Message("标签状态最长为3个字符")
-	valid.Required(&addTagForm.CreatedBy, "createdBy").Message("创建人不能为空")
-	valid.MaxSize(&addTagForm.CreatedBy, 100, "createdBy").Message("标签创建人最长为100个字符")
+	valid.Required(&addTagForm.Name, "name").Message("名称不能为空")
+	valid.MaxSize(&addTagForm.Name, 100, "name").Message("名称最长为100字符")
+	valid.Required(&addTagForm.CreatedBy, "created_by").Message("创建人不能为空")
+	valid.MaxSize(&addTagForm.CreatedBy, 100, "created_by").Message("创建人最长为100字符")
+	valid.Range(&addTagForm.State, 0, 1, "state").Message("状态只允许0或1")
 
 	maps["name"] = addTagForm.Name
 	maps["state"] = addTagForm.State
@@ -88,27 +87,95 @@ func AddTag(c *gin.Context) {
 
 	//ok, _ := valid.Valid(&maps)
 	code := msgCode.INVALID_PARAMS
-	if models.ExistTag(addTagForm.Name) {
-		code = msgCode.ERROR_EXIST_TAG
-		logging.Warn(addTagForm.Name, ": 标签已存在！！！！！！")
-	} else {
-		code = msgCode.SUCCESS
-		models.AddTag(maps)
+	if !valid.HasErrors() {
+		if models.ExistTag(addTagForm.Name) {
+			code = msgCode.ERROR_EXIST_TAG
+			logging.Warn(addTagForm.Name, ": 标签已存在！！！！！！")
+		} else {
+			code = msgCode.SUCCESS
+			models.AddTag(maps)
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  msgCode.GetMsg(code),
+		"data": maps,
+	})
+
+}
+
+type EditTagForm struct {
+	ID         int    `gorm:"column:name" json:"id" valid:"Required"`
+	Name       string `gorm:"column:name" json:"tagName" valid:"Required"`
+	ModifiedBy string `gorm:"column:modified_by" json:"modifiedby"`
+	State      int    `gorm:"column:state" json:"state"`
+}
+
+//修改文章标签
+func EditTag(c *gin.Context) {
+	var editTagForm EditTagForm
+	err := c.BindJSON(&editTagForm)
+	if err != nil {
+		logging.Error(err)
+	}
+
+	data := make(map[string]interface{})
+
+	valid := validation.Validation{}
+	valid.Required(&editTagForm.ID, "id").Message("id不能为空")
+	valid.Required(&editTagForm.Name, "name").Message("名称不能为空")
+	valid.MaxSize(&editTagForm.Name, 100, "name").Message("名称最长100字符")
+	valid.Required(&editTagForm.ModifiedBy, "modified_by").Message("更新人不能为空")
+	valid.MaxSize(&editTagForm.ModifiedBy, 100, "modified_by").Message("创建人最长为100字符")
+
+	code := msgCode.INVALID_PARAMS
+
+	if !valid.HasErrors() {
+		if !models.ExisTagById(editTagForm.ID) {
+			code = msgCode.ERROR_NOT_EXIST_TAG
+			logging.Warn(editTagForm.Name, ": 标签不存在！！！！！")
+		} else {
+			code = msgCode.SUCCESS
+			data["modified_by"] = editTagForm.ModifiedBy
+			if editTagForm.Name != "" {
+				data["name"] = editTagForm.Name
+			}
+			models.EditTag(editTagForm.ID, data)
+			logging.Info("修改标签成功，传参： ", editTagForm.ID, data)
+		}
+
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  msgCode.GetMsg(code),
+		"data": data,
+	})
+
+}
+
+//删除文章标签
+func DeleteTag(c *gin.Context) {
+	id := com.StrTo(c.Query("id")).MustInt()
+
+	valid := validation.Validation{}
+	valid.Min(id, 1, "id").Message("ID必须大于0")
+
+	code := msgCode.INVALID_PARAMS
+
+	if !valid.HasErrors() {
+		if !models.ExisTagById(id) {
+			code = msgCode.ERROR_NOT_EXIST_TAG
+			logging.Warn(id, "标签不存在")
+		} else {
+			code = msgCode.SUCCESS
+			models.DeleteTag(id)
+			logging.Info("删除标签成功")
+		}
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  msgCode.GetMsg(code),
 		"data": nil,
 	})
-
-}
-
-//修改文章标签
-func EditTag(c *gin.Context) {
-
-}
-
-//删除文章标签
-func DeleteTag(c *gin.Context) {
-
 }

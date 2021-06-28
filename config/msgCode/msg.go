@@ -16,6 +16,7 @@ var MsgFlags = map[int]string{
 	ERROR_NOT_EXIST_GROUP:          "业务线不存在",
 	ERROR_EXIST_AUTH:               "用户已存在",
 	ERROR_EXIST_TAG:                "标签已存在",
+	ERROR_NOT_EXIST_TAG:            "标签不存在",
 }
 
 func GetMsg(code int) string {
