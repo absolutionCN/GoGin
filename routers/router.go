@@ -4,6 +4,7 @@ import (
 	"GoGin/config"
 	_ "GoGin/docs"
 	"GoGin/middleware/jwt"
+	"GoGin/routers/api/articleModel"
 	"GoGin/routers/api/tagModel"
 	"GoGin/routers/api/v1"
 	"github.com/gin-gonic/gin"
@@ -47,6 +48,14 @@ func InitRouter() *gin.Engine {
 		tagRoute.PUT("/editTag", tagModel.EditTag)
 		//删除文章标签
 		tagRoute.DELETE("/deleteTag", tagModel.DeleteTag)
+	}
+	articleRoute := r.Group("/api/articleModel")
+	{
+		articleRoute.GET("/articles", articleModel.GetArticles)
+		articleRoute.GET("/article", articleModel.GetArticle)
+		articleRoute.POST("/addArticle", articleModel.AddArticle)
+		articleRoute.PUT("/editArticle", articleModel.EditArticle)
+		articleRoute.DELETE("/article", articleModel.DeleteArticle)
 	}
 	return r
 }
