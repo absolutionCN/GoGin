@@ -17,6 +17,7 @@ const (
 	ERROR_EXIST_AUTH               = 30002
 	ERROR_EXIST_TAG                = 30003
 	ERROR_NOT_EXIST_TAG            = 30004
+	ERROR_NOT_EXIST_ARTICLE        = 30005
 )
 
 const (
