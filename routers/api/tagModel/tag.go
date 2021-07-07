@@ -154,7 +154,7 @@ func EditTag(c *gin.Context) {
 
 }
 
-//删除文章标签
+//删除文章
 func DeleteTag(c *gin.Context) {
 	id := com.StrTo(c.Query("id")).MustInt()
 
@@ -168,9 +168,9 @@ func DeleteTag(c *gin.Context) {
 			code = msgCode.ERROR_NOT_EXIST_TAG
 			logging.Warn(id, "标签不存在")
 		} else {
-			code = msgCode.SUCCESS
 			models.DeleteTag(id)
 			logging.Info("删除标签成功", id)
+			code = msgCode.SUCCESS
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{

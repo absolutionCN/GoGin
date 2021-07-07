@@ -1,6 +1,8 @@
 package models
 
 import (
+	"GoGin/config/logging"
+	"fmt"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -74,8 +76,11 @@ func AddArticle(data map[string]interface{}) error {
 }
 
 func DeleteArticle(id int) bool {
-	err := db.Model(&Article{}).Where("id = ？", id).Update("delete_on", 1)
+	//TODO 这个位置有BUG
+	err := db.Table("blog_article").Where("id = ?", id).Update("deleted_on", 1)
+	fmt.Println(err)
 	if err != nil {
+		logging.Error("删除文章失败、错误原因： ", err)
 		return false
 	} else {
 		return true

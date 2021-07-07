@@ -101,8 +101,8 @@ type ArticleForm struct {
 	Title      string `gorm:"column:title" json:"title" valid:"Required"`
 	Desc       string `gorm:"column:desc" json:"desc" valid:"Required"`
 	Content    string `gorm:"column:content" json:"content" valid:"Required"`
-	CreatedBy  string `gorm:"column:created_by" json:"createdby"`
-	ModifiedBy string `gorm:"column:modified_by" json:"modifiedby"`
+	CreatedBy  string `gorm:"column:created_by" json:"created_by"`
+	ModifiedBy string `gorm:"column:modified_by" json:"modified_by"`
 	State      int    `gorm:"column:state" json:"state"`
 }
 
@@ -116,7 +116,7 @@ func AddArticle(c *gin.Context) {
 		logging.Error("新增文章报错: ", err)
 	}
 	valid := validation.Validation{}
-	valid.Min(&addArticleForm.TagId, 1, "tag_id").Message("标签必须大于0")
+	//valid.Min(&addArticleForm.TagId, 1, "tag_id").Message("标签必须大于0")
 	valid.Required(&addArticleForm.Title, "title").Message("标题不能为空")
 	valid.Required(&addArticleForm.Desc, "desc").Message("描述不能为空")
 	valid.Required(&addArticleForm.Content, "content").Message("文章内容不能为空")
@@ -126,7 +126,7 @@ func AddArticle(c *gin.Context) {
 	data["title"] = addArticleForm.Title
 	data["desc"] = addArticleForm.Desc
 	data["content"] = addArticleForm.Content
-	data["createdBy"] = addArticleForm.CreatedBy
+	data["created_by"] = addArticleForm.CreatedBy
 
 	code := msgCode.INVALID_PARAMS
 	if !valid.HasErrors() {
@@ -220,9 +220,13 @@ func DeleteArticle(c *gin.Context) {
 			code = msgCode.ERROR_NOT_EXIST_ARTICLE
 			logging.Warn(id, "文章不存在")
 		} else {
-			code = msgCode.SUCCESS
-			models.DeleteArticle(id)
-			logging.Info("删除文章成功：", id)
+			err := models.DeleteArticle(id)
+			if err != true {
+				logging.Error("删除文章失败,错误原因： ", err)
+			} else {
+				code = msgCode.SUCCESS
+				logging.Info("删除文章成功：", id)
+			}
 		}
 	} else {
 	}
