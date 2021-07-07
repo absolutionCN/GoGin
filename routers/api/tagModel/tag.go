@@ -170,7 +170,7 @@ func DeleteTag(c *gin.Context) {
 		} else {
 			code = msgCode.SUCCESS
 			models.DeleteTag(id)
-			logging.Info("删除标签成功")
+			logging.Info("删除标签成功", id)
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
