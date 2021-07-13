@@ -1,7 +1,6 @@
 package tagModel
 
 import (
-	"GoGin/config"
 	"GoGin/config/logging"
 	"GoGin/config/msgCode"
 	"GoGin/config/util"
@@ -19,7 +18,7 @@ func GetTags(c *gin.Context) {
 	data := make(map[string]interface{})
 
 	valid := validation.Validation{}
-	var state int = -1
+	var state int = 1
 	if arg := c.Query("state"); arg != "" {
 		state = com.StrTo(arg).MustInt()
 		maps["state"] = state
@@ -42,7 +41,7 @@ func GetTags(c *gin.Context) {
 
 	if !valid.HasErrors() {
 		code = msgCode.SUCCESS
-		data["lists"] = models.GetTags(util.GetPage(pageNum, pageSize), config.PageSize, maps)
+		data["lists"] = models.GetTags(util.GetPage(pageNum, pageSize), pageSize, maps)
 		data["total"] = models.GetTagTotal(maps)
 	} else {
 		for _, err := range valid.Errors {

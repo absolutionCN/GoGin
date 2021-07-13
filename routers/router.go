@@ -39,6 +39,7 @@ func InitRouter() *gin.Engine {
 	}
 
 	tagRoute := r.Group("/api/tagModel")
+	tagRoute.Use(jwt.JWT())
 	{
 		//获取多个标签
 		tagRoute.GET("/tags", tagModel.GetTags)
@@ -50,6 +51,7 @@ func InitRouter() *gin.Engine {
 		tagRoute.DELETE("/deleteTag", tagModel.DeleteTag)
 	}
 	articleRoute := r.Group("/api/articleModel")
+	articleRoute.Use(jwt.JWT())
 	{
 		articleRoute.GET("/articles", articleModel.GetArticles)
 		articleRoute.GET("/article", articleModel.GetArticle)

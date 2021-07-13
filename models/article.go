@@ -1,8 +1,6 @@
 package models
 
 import (
-	"GoGin/config/logging"
-	"fmt"
 	"github.com/jinzhu/gorm"
 	"time"
 )
@@ -41,7 +39,7 @@ func GetArticleTotal(maps interface{}) (count int) {
 }
 
 func GetArticles(pageNum int, pageSize int, maps interface{}) (articles []Article) {
-	db.Preloads("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles)
+	db.Preload("Tag").Where(maps).Offset(pageNum).Limit(pageSize).Find(&articles)
 	return
 }
 
@@ -76,15 +74,17 @@ func AddArticle(data map[string]interface{}) error {
 }
 
 func DeleteArticle(id int) bool {
-	//TODO 这个位置有BUG
-	err := db.Table("blog_article").Where("id = ?", id).Update("deleted_on", 1)
-	fmt.Println(err)
-	if err != nil {
-		logging.Error("删除文章失败、错误原因： ", err)
-		return false
-	} else {
-		return true
-	}
+	//err := db.Model(&Article{}).Where("id = ?", id).Update("deleted_on", 1)
+	//fmt.Println(err)
+	//if err != nil {
+	//	logging.Error("删除文章失败、错误原因： ", err)
+	//	return false
+	//} else {
+	//	return true
+	//}
+
+	db.Where("id = ?", id).Delete(&Article{})
+	return true
 }
 
 func (article *Article) BeforeCreate(scope *gorm.Scope) error {

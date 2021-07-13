@@ -1,7 +1,6 @@
 package articleModel
 
 import (
-	"GoGin/config"
 	"GoGin/config/logging"
 	"GoGin/config/msgCode"
 	"GoGin/config/util"
@@ -74,14 +73,14 @@ func GetArticles(c *gin.Context) {
 	if arg := c.Query("pageSize"); arg != "" {
 		pageSize = com.StrTo(c.DefaultQuery("pageSize", "0")).MustInt()
 	} else {
-		pageSize = 0
+		pageSize = 10
 	}
 
 	code := msgCode.INVALID_PARAMS
 
 	if !valid.HasErrors() {
 		code = msgCode.SUCCESS
-		data["lists"] = models.GetArticles(util.GetPage(pageNum, pageSize), config.PageSize, maps)
+		data["lists"] = models.GetArticles(util.GetPage(pageNum, pageSize), pageSize, maps)
 		data["total"] = models.GetArticleTotal(maps)
 	} else {
 		for _, err := range valid.Errors {
