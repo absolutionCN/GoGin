@@ -4,19 +4,35 @@ import (
 	"GoGin/config"
 	"GoGin/routers"
 	"fmt"
-	"net/http"
+	"github.com/fvbock/endless"
+	"log"
+	"syscall"
 )
 
 func main() {
-	router := routers.InitRouter()
+	endless.DefaultReadTimeOut = config.ReadTimeout
+	endless.DefaultWriteTimeOut = config.WriteTimeout
+	endless.DefaultMaxHeaderBytes = 1 << 20
 
-	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", config.HTTPPort),
-		Handler:        router,
-		ReadTimeout:    config.ReadTimeout,
-		WriteTimeout:   config.WriteTimeout,
-		MaxHeaderBytes: 1 << 20,
+	endPoint := fmt.Sprintf(":%d", config.HTTPPort)
+	server := endless.NewServer(endPoint, routers.InitRouter())
+	server.BeforeBegin = func(add string) {
+		log.Printf("Actual pid is %d", syscall.Getpid())
+	}
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Printf("Server err: %v", err)
 	}
 
-	s.ListenAndServe()
+	//router := routers.InitRouter()
+	//
+	//s := &http.Server{
+	//	Addr:           fmt.Sprintf(":%d", config.HTTPPort),
+	//	Handler:        router,
+	//	ReadTimeout:    config.ReadTimeout,
+	//	WriteTimeout:   config.WriteTimeout,
+	//	MaxHeaderBytes: 1 << 20,
+	//}
+	//
+	//s.ListenAndServe()
 }
