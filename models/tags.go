@@ -83,6 +83,12 @@ func DeleteTag(id int) bool {
 	}
 }
 
+func CleanAllTag() bool {
+	db.Unscoped().Where("deleted_on != ? ", 0).Delete(&Tag{})
+
+	return true
+}
+
 func (tag *Tag) BeforeCreate(scope *gorm.Scope) error {
 	scope.SetColumn("CreatedOn", time.Now().Unix())
 	return nil
