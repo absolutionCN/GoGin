@@ -18,7 +18,7 @@ func InitRouter() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	gin.SetMode(config.RunMode)
+	gin.SetMode(config.ServerSetting.RunMode)
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	r.POST("/user/login", api.GetAuthToken)
 	r.GET("/user/info/get", api.GetUserInfo)
@@ -32,7 +32,6 @@ func InitRouter() *gin.Engine {
 		apiToken.POST("/token", api.AddToken)
 		apiToken.PUT("/token", api.EditToken)
 		apiToken.DELETE("/token/:id", api.DeleteToken)
-		apiToken.GET("/svc/:id", api.GetSvcApi)
 		apiToken.GET("/product/owner/total", api.GetMemberApiTotal)
 		apiToken.GET("/product/total", api.GetProductApiTotal)
 		apiToken.GET("/product/member", api.GetProjectMember)

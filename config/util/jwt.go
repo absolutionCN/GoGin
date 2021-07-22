@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-var (
-	jwtSecret = []byte(config.JwtSecret)
-)
-
 type Claims struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -32,14 +28,14 @@ func GenerateToken(username, password string) (string, error) {
 	}
 
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err := tokenClaims.SignedString(jwtSecret)
+	token, err := tokenClaims.SignedString(config.AppSetting.JwtSecret)
 
 	return token, err
 }
 
 func ParseToken(token string) (*Claims, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
-		return jwtSecret, nil
+		return config.AppSetting.JwtSecret, nil
 	})
 
 	if tokenClaims != nil {

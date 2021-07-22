@@ -1,30 +1,45 @@
 package logging
 
 import (
+	"GoGin/config"
 	"fmt"
 	"log"
 	"os"
 	"time"
 )
 
-var (
-	LogSavePath = "runtime/logs/"
-	LogSaveName = "log"
-	LogFileExt  = "log"
-	TimeFormat  = "20060102"
-)
+//var (
+//	LogSavePath = "runtime/logs/"
+//	LogSaveName = "log"
+//	LogFileExt  = "log"
+//	TimeFormat  = "20060102"
+//)
 
 func getLogFilePath() string {
-	return fmt.Sprintf("%s", LogSavePath)
+	return fmt.Sprintf("%s%s", config.AppSetting.RuntimeRootPath, config.AppSetting.LogSavePath)
 }
+
+func getLogFileName() string {
+	return fmt.Sprintf("%s%s.%s",
+		config.AppSetting.LogSaveName,
+		time.Now().Format(config.AppSetting.TimeFormat),
+		config.AppSetting.LogFileExt,
+	)
+}
+
+//func getLogFilePath() string {
+//	return fmt.Sprintf("%s", config.AppSetting.LogSavePath)
+//
+//}
 
 func getLogFileFullPath() string {
 	prefixPath := getLogFilePath()
-	suffixPath := fmt.Sprintf("%s%s.%s", LogSaveName, time.Now().Format(TimeFormat), LogFileExt)
+	suffixPath := fmt.Sprintf("%s%s.%s", config.AppSetting.LogSaveName, time.Now().Format(config.AppSetting.TimeFormat), config.AppSetting.LogFileExt)
 
 	return fmt.Sprintf("%s%s", prefixPath, suffixPath)
 }
 
+//
 func openLogFile(filePath string) *os.File {
 	_, err := os.Stat(filePath)
 	switch {

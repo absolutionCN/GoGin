@@ -2,6 +2,9 @@ package main
 
 import (
 	"GoGin/config"
+	"GoGin/config/logging"
+
+	"GoGin/models"
 	"GoGin/routers"
 	"fmt"
 	"github.com/fvbock/endless"
@@ -10,11 +13,15 @@ import (
 )
 
 func main() {
-	endless.DefaultReadTimeOut = config.ReadTimeout
-	endless.DefaultWriteTimeOut = config.WriteTimeout
+	config.Setup()
+	models.Setup()
+	logging.Setup()
+
+	endless.DefaultReadTimeOut = config.ServerSetting.ReadTimeout
+	endless.DefaultWriteTimeOut = config.ServerSetting.WriteTimeout
 	endless.DefaultMaxHeaderBytes = 1 << 20
 
-	endPoint := fmt.Sprintf(":%d", config.HTTPPort)
+	endPoint := fmt.Sprintf(":%d", config.ServerSetting.HttpPort)
 	server := endless.NewServer(endPoint, routers.InitRouter())
 	server.BeforeBegin = func(add string) {
 		log.Printf("Actual pid is %d", syscall.Getpid())
